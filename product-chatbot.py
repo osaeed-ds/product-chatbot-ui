@@ -50,7 +50,7 @@ def main():
     st.session_state.activate_chat = True
 
     if st.session_state.activate_chat == True:
-        if prompt := st.chat_input("What kind of product are you looking for?"):
+        if prompt := st.chat_input("We are a big box electornics store.  What are you looking for?"):
             with st.chat_message("user", avatar = '👨🏻'):
                 st.markdown(prompt)
             st.session_state.messages.append({"role": "user", 
