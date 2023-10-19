@@ -80,8 +80,11 @@ def main():
                 ORDER BY openai_description_embedding ANN OF {} LIMIT 5;
                 """.format(keyspace,embedding)
             )
-
-            cleaned_response = 'HERE IS THE ANSESWER'
+            results = session.execute(query)
+            top_5_products = results._current_rows
+            for row in top_5_products:
+              cleaned_response = (f"""{row.product_id}, {row.product_name}, {row.description}, {row.price}\n""")
+            #cleaned_response = 'HERE IS THE ANSESWER'
             with st.chat_message("assistant", avatar='🤖'):
                 st.markdown(cleaned_response)
             st.session_state.messages.append({"role": "assistant", 
