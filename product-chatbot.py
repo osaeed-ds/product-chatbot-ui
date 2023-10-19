@@ -5,19 +5,8 @@ import openai
 from cassandra.query import SimpleStatement
 import openai
 import numpy
-from langchain.llms import OpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores.cassandra import Cassandra
-from langchain.indexes import VectorstoreIndexCreator
-from langchain.text_splitter import (
-    CharacterTextSplitter,
-    RecursiveCharacterTextSplitter,
-)
-from langchain.docstore.document import Document
-from langchain.document_loaders import TextLoader, PyPDFLoader
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
-from copy import deepcopy
 from tempfile import NamedTemporaryFile
 
 @st.cache_resource
@@ -34,8 +23,6 @@ def create_datastax_connection():
     return astra_session
 
 def main():
-
-    index_placeholder = None
 
     st.set_page_config(page_title = "Product Catalog Search", page_icon="📔")
     st.header('📔 Product Catalog Search')
@@ -56,10 +43,7 @@ def main():
     session = create_datastax_connection()
     model_id = "text-embedding-ada-002"
 
-    os.environ['OPENAI_API_KEY'] = st.secrets["openai_key"]
     openai.api_key = st.secrets["openai_key"]
-    llm = OpenAI(temperature=0)
-    openai_embeddings = OpenAIEmbeddings()
     table_name = 'products_table'
     keyspace = "vector_preview"
 
