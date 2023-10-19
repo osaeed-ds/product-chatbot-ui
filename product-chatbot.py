@@ -65,7 +65,7 @@ def main():
     st.session_state.activate_chat = True
 
     if st.session_state.activate_chat == True:
-        if prompt := st.chat_input("Ask your question from the PDF?"):
+        if prompt := st.chat_input("What kind of product are you looking for?"):
             with st.chat_message("user", avatar = '👨🏻'):
                 st.markdown(prompt)
             st.session_state.messages.append({"role": "user", 
@@ -87,7 +87,7 @@ def main():
                         "content":"You're a chatbot helping customers with questions and helping them with product recommendations"})
 
             message_objects.append({"role":"user",
-                        "content": customer_input})
+                        "content": prompt})
 
             message_objects.append({"role":"user",
                         "content": "Please give me a detailed explanation of your recommendations"})
