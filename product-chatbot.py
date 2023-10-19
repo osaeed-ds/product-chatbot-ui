@@ -1,6 +1,10 @@
 import json
 import os
 import streamlit as st
+import openai
+from cassandra.query import SimpleStatement
+import openai
+import numpy
 from langchain.llms import OpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores.cassandra import Cassandra
@@ -49,11 +53,12 @@ def main():
             st.markdown(message["content"])
 
     session = create_datastax_connection()
+    model_id = "text-embedding-ada-002"
 
     os.environ['OPENAI_API_KEY'] = st.secrets["openai_key"]
     llm = OpenAI(temperature=0)
     openai_embeddings = OpenAIEmbeddings()
-    table_name = 'pdf_q_n_a_table_3'
+    table_name = 'products_table'
     keyspace = "vector_preview"
 
     pdf_index = Cassandra(
@@ -76,8 +81,17 @@ def main():
                                               "content": prompt})
 
             index_placeholder = st.session_state.pdf_index
-            pdf_response = index_placeholder.query_with_sources(prompt, llm = llm)
-            cleaned_response = pdf_response["answer"]
+            embedding = openai.Embedding.create(input=prompt, model=model_id)['data'][0]['embedding']
+            query = SimpleStatement(
+                """
+                SELECT *
+                FROM {}.products_table
+                ORDER BY openai_description_embedding ANN OF {} LIMIT 5;
+                """.format(keyspace,embedding)
+            )
+
+#            pdf_response = index_placeholder.query_with_sources(prompt, llm = llm)
+            cleaned_response = 'HERE IS THE ANSESWER
             with st.chat_message("assistant", avatar='🤖'):
                 st.markdown(cleaned_response)
             st.session_state.messages.append({"role": "assistant", 
