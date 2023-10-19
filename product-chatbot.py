@@ -82,9 +82,36 @@ def main():
             )
             results = session.execute(query)
             top_5_products = results._current_rows
+            message_objects = []
+            message_objects.append({"role":"system",
+                        "content":"You're a chatbot helping customers with questions and helping them with product recommendations"})
+
+            message_objects.append({"role":"user",
+                        "content": customer_input})
+
+            message_objects.append({"role":"user",
+                        "content": "Please give me a detailed explanation of your recommendations"})
+
+            message_objects.append({"role":"user",
+                        "content": "Please be friendly and talk to me like a person, don't just give me a list of recommendations"})
+
+            message_objects.append({"role": "assistant",
+                        "content": "I found these 3 products I would recommend"})
+
+            products_list = []
+
             for row in top_5_products:
-              cleaned_response = (f"""{row.product_id}, {row.product_name}, {row.description}, {row.price}\n""")
-            #cleaned_response = 'HERE IS THE ANSESWER'
+                brand_dict = {'role': "assistant", "content": f"{row.description}"}
+                products_list.append(brand_dict)
+
+            message_objects.extend(products_list)
+            message_objects.append({"role": "assistant", "content":"Here's my summarized recommendation of products, and why it would suit you:"})
+
+            completion = openai.ChatCompletion.create(
+              model="gpt-3.5-turbo",
+              messages=message_objects
+            )            
+            cleaned_response = completion.choices[0].message['content']
             with st.chat_message("assistant", avatar='🤖'):
                 st.markdown(cleaned_response)
             st.session_state.messages.append({"role": "assistant", 
