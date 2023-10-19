@@ -61,15 +61,6 @@ def main():
     table_name = 'products_table'
     keyspace = "vector_preview"
 
-    pdf_index = Cassandra(
-            embedding = openai_embeddings,
-            session = session,
-            keyspace = keyspace,
-            table_name = table_name,
-        )
-    
-    if "pdf_index" not in st.session_state:
-        st.session_state.pdf_index = pdf_index
     st.session_state.activate_chat = True
 
     if st.session_state.activate_chat == True:
@@ -80,7 +71,6 @@ def main():
                                               "avatar" :'👨🏻',
                                               "content": prompt})
 
-            index_placeholder = st.session_state.pdf_index
             embedding = openai.Embedding.create(input=prompt, model=model_id)['data'][0]['embedding']
             query = SimpleStatement(
                 """
@@ -90,7 +80,6 @@ def main():
                 """.format(keyspace,embedding)
             )
 
-#            pdf_response = index_placeholder.query_with_sources(prompt, llm = llm)
             cleaned_response = 'HERE IS THE ANSESWER'
             with st.chat_message("assistant", avatar='🤖'):
                 st.markdown(cleaned_response)
