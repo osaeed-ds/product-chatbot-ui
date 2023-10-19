@@ -36,7 +36,6 @@ def create_datastax_connection():
 def main():
 
     index_placeholder = None
-    !curl -o secure-connect-osaeed-vector.zip 'https://datastax-cluster-config-prod.s3.us-east-2.amazonaws.com/8dce574d-98e5-4b4d-bdfe-2477340a5d09-1/secure-connect-osaeed-vector.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2AIQRQ76S2JCB77W%2F20231019%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20231019T082945Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=291297335ac710bbea58ceb6fd3e2613470d3bed799412848d3977501d810787'
 
     st.set_page_config(page_title = "Product Catalog Search", page_icon="📔")
     st.header('📔 Product Catalog Search')
