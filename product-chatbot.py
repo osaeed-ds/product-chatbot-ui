@@ -32,8 +32,8 @@ def create_datastax_connection():
 def main():
 
     index_placeholder = None
-    st.set_page_config(page_title = "Chat with your PDF", page_icon="📔")
-    st.header('📔 Chat with your PDF')
+    st.set_page_config(page_title = "Product Catalog Search", page_icon="📔")
+    st.header('📔 Product Catalog Search')
     
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -56,36 +56,18 @@ def main():
     table_name = 'pdf_q_n_a_table_3'
     keyspace = "vector_preview"
 
-    out_index_creator = VectorstoreIndexCreator(
-            vectorstore_cls = Cassandra,
+    pdf_index = Cassandra(
             embedding = openai_embeddings,
-            text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 400,
-            chunk_overlap = 30),
-            vectorstore_kwargs={
-            'session': session,
-            'keyspace': keyspace,
-            'table_name': table_name}
+            session = session,
+            keyspace = keyspace,
+            table_name = table_name,
         )
     
-    with st.sidebar:
-        st.subheader('Upload Your PDF File')
-        docs = st.file_uploader('⬆️ Upload your PDF & Click to process',
-                                accept_multiple_files = False, 
-                                type=['pdf'])
-        if st.button('Process'):
-            with NamedTemporaryFile(dir='.', suffix='.pdf') as f:
-                f.write(docs.getbuffer())
-                with st.spinner('Processing'):
-                    file_name = f.name
-                    loader = PyPDFLoader(file_name)
-                    pages = loader.load_and_split()
-                    pdf_index = out_index_creator.from_loaders([loader])
-                    # index_placeholder = deepcopy(pdf_index)
-                    if "pdf_index" not in st.session_state:
-                        st.session_state.pdf_index = pdf_index
-                    st.session_state.activate_chat = True
+    if "pdf_index" not in st.session_state:
+        st.session_state.pdf_index = pdf_index
+    st.session_state.activate_chat = True
 
+	st.session_state.activate_chat = True
     if st.session_state.activate_chat == True:
         if prompt := st.chat_input("Ask your question from the PDF?"):
             with st.chat_message("user", avatar = '👨🏻'):
@@ -102,10 +84,6 @@ def main():
             st.session_state.messages.append({"role": "assistant", 
                                               "avatar" :'🤖',
                                               "content": cleaned_response})
-        else:
-            st.markdown(
-                'Upload your PDFs to chat'
-                )
 
 
 if __name__ == '__main__':
