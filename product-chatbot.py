@@ -56,6 +56,7 @@ def main():
     model_id = "text-embedding-ada-002"
 
     os.environ['OPENAI_API_KEY'] = st.secrets["openai_key"]
+    openai.api_key = st.secrets["openai_key"]
     llm = OpenAI(temperature=0)
     openai_embeddings = OpenAIEmbeddings()
     table_name = 'products_table'
