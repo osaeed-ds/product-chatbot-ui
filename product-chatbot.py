@@ -67,7 +67,6 @@ def main():
         st.session_state.pdf_index = pdf_index
     st.session_state.activate_chat = True
 
-	st.session_state.activate_chat = True
     if st.session_state.activate_chat == True:
         if prompt := st.chat_input("Ask your question from the PDF?"):
             with st.chat_message("user", avatar = '👨🏻'):
